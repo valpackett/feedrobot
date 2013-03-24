@@ -2,7 +2,7 @@ require 'ohm'
 require 'rumonade'
 require_relative 'const.rb'
 
-Ohm.connect :url => REDIS_URI, :thread_safe => true
+Ohm.connect :url => REDIS_URL, :thread_safe => true
 
 class Model < Ohm::Model
   def self.find_or_create(params)
