@@ -13,7 +13,6 @@ class FeedRobot < Sinatra::Base
 
   configure :production do
     require 'newrelic_rpm'
-    use Rack::SslEnforcer
   end
   use Rack::Session::Cookie, :secret => settings.session_secret
   use OmniAuth::Builder do
