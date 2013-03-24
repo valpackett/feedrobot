@@ -9,7 +9,9 @@ Thread.abort_on_exception = true
 
 if ADN_TOKEN
   Thread.new do
-    Worker.start
+    Raven.capture do
+      Worker.start
+    end
   end
 
   Thread.new do
