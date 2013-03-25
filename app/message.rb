@@ -26,8 +26,8 @@ class Message
     @data['user']['username']
   end
 
-  def feed_urls
-    User.find_or_create(:uid => author_id).feeds.map(&:url)
+  def user
+    @user ||= User.find_or_create(:uid => author_id)
   end
 
   def reply(params)
@@ -73,12 +73,14 @@ class Message
   end
 
   def list
-    reply :text => "Here are the feeds you're subscribed to:\n#{feed_urls.join "\n"}"
+    user.secret = SecureRandom.uuid
+    user.save
+    reply :text => "Here are the feeds you're subscribed to:\nhttps://#{HOST}/subscriptions/#{user.uid}/#{user.secret}"
   end
 
   def export
     title = "Exported subscriptions from the App.net Feed Robot for @#{author_username}"
-    xml = OPML.dump title, feed_urls
+    xml = OPML.dump title, user.feed_urls
     filename = "feedrobot-export-#{author_username}-#{DateTime.now.to_s}.xml"
     file = Tempfile.new filename
     begin

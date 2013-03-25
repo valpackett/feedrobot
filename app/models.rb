@@ -16,9 +16,14 @@ class Feed < Model
 end
 
 class User < Model
+  attribute :secret
   attribute :uid
   index :uid
   set :feeds, :Feed
+
+  def feed_urls
+    feeds.map(&:url)
+  end
 end
 
 class Subscription
@@ -29,16 +34,12 @@ class Subscription
   def self.subscribe_user(url, uid)
     feed, user = find_or_create url, uid
     feed.users.add user
-    feed.save
     user.feeds.add feed
-    user.save
   end
 
   def self.unsubscribe_user(url, uid)
     feed, user = find_or_create url, uid
     feed.users.delete user
-    feed.save
     user.feeds.delete feed
-    user.save
   end
 end

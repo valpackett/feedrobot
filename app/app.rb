@@ -57,6 +57,13 @@ class FeedRobot < Sinatra::Base
     redirect '/'
   end
 
+  get '/subscriptions/:uid/:secret' do
+    user = User.find(:uid => params[:uid]).first
+    halt 404 unless user && user.secret == params[:secret]
+    list = user.feeds.map(&:url).map { |u| "<li><a href='#{u}'>#{u}</a></li>" }.join "\n"
+    "<!DOCTYPE html><ul>#{list}</ul>"
+  end
+
   get TOKEN_URL do
     if @me.nil?
       "<form method=post action='/auth/appdotnet'><button type=submit>get token</button></form>"
