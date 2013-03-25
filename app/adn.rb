@@ -82,6 +82,15 @@ class ADN
     params[:content] = Faraday::UploadIO.new file, type, filename
     @api.post 'files', params
   end
+
+  def self.gen_attachment(filedata)
+    {:type  => 'net.app.core.attachments',
+     :value => {'+net.app.core.file_list' => [
+       {:file_token => filedata['file_token'],
+        :file_id    => filedata['id'],
+        :format     => :metadata}
+     ]}}
+  end
 end
 
 ADN.global = ADN.new ADN_TOKEN

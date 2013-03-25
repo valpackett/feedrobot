@@ -21,3 +21,23 @@ class User < Model
   index :uid
   set :feeds, :Feed
 end
+
+class Subscription
+  def self.subscribe_user(url, uid)
+    feed = Feed.find_or_create :url => url
+    user = User.find_or_create :uid => uid
+    feed.users.add user
+    feed.save
+    user.feeds.add feed
+    user.save
+  end
+
+  def self.unsubscribe_user(url, uid)
+    feed = Feed.find_or_create :url => url
+    user = User.find_or_create :uid => uid
+    feed.users.delete user
+    feed.save
+    user.feeds.delete feed
+    user.save
+  end
+end

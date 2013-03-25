@@ -22,6 +22,7 @@ gem "ohm"
 gem "oj"
 gem "sentry-raven"
 gem "rumonade"
+gem "builder"
 
 group :development, :test do
   gem "rspec"
