@@ -23,6 +23,7 @@ gem "oj"
 gem "sentry-raven"
 gem "rumonade"
 gem "builder"
+gem "rufus-scheduler"
 
 group :development, :test do
   gem "rspec"

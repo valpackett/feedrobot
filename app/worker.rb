@@ -1,5 +1,6 @@
 require_relative 'adn.rb'
 require_relative 'app.rb'
+require_relative 'models.rb'
 require_relative 'message.rb'
 
 class Worker
@@ -21,6 +22,12 @@ class Worker
       adn.unread_messages(cid).each do |msg|
         Message.new(adn, msg).process
       end
+    end
+  end
+
+  def self.ensure_subscriptions
+    Feed.all.each do |f|
+      $superfeedr.subscribe f.url
     end
   end
 end
