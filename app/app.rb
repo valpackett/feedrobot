@@ -57,6 +57,10 @@ class FeedRobot < Sinatra::Base
     redirect '/'
   end
 
+  get '/' do
+    "hello :-)"
+  end
+
   get '/subscriptions/:uid/:secret' do
     user = User.find(:uid => params[:uid]).first
     halt 404 unless user && user.secret == params[:secret]
