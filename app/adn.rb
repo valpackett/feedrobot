@@ -19,7 +19,6 @@ class ADN
       adn.response :multi_json
       adn.adapter  :typhoeus
     end
-    @my_id = nil
   end
 
   def method_missing(*args)
@@ -31,10 +30,7 @@ class ADN
   end
 
   def my_id
-    if @my_id.nil?
-      @my_id = me['id']
-    end
-    @my_id
+    @my_id ||= me['id']
   end
 
   def send_pm(params)
