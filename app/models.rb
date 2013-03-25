@@ -23,9 +23,12 @@ class User < Model
 end
 
 class Subscription
+  def self.find_or_create(url, uid)
+    [Feed.find_or_create(:url => url), User.find_or_create(:uid => uid)]
+  end
+
   def self.subscribe_user(url, uid)
-    feed = Feed.find_or_create :url => url
-    user = User.find_or_create :uid => uid
+    feed, user = find_or_create url, uid
     feed.users.add user
     feed.save
     user.feeds.add feed
@@ -33,8 +36,7 @@ class Subscription
   end
 
   def self.unsubscribe_user(url, uid)
-    feed = Feed.find_or_create :url => url
-    user = User.find_or_create :uid => uid
+    feed, user = find_or_create url, uid
     feed.users.delete user
     feed.save
     user.feeds.delete feed
