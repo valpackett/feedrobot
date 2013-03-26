@@ -6,6 +6,10 @@ require './app/app.rb'
 require './app/worker.rb'
 require './app/const.rb'
 
+Raven.configure do |config|
+  config.excluded_exceptions = ['Sinatra::NotFound']
+end
+
 Thread.abort_on_exception = true
 
 if ADN_TOKEN
