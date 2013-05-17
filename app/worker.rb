@@ -23,6 +23,7 @@ class Worker
         Message.new(adn, msg).process
       end
     end
+    adn.unfollow_unfollowers
   end
 
   def self.ensure_subscriptions

@@ -52,10 +52,22 @@ class ADN
   def follow_followers
     @api.get('users/me/followers', :count => 200).body['data'].map do |usr|
       unless usr['you_follow'] || usr['id'] == '18614' # ignore @welcome
-        @api.post("users/#{usr['id']}/follow")
-        usr['id']
+        fol = @api.post("users/#{usr['id']}/follow")
+        if fol.status == 200
+          usr['id']
+        else
+          puts "Failed following"
+          puts fol
+          nil
+        end
       end
     end.compact
+  end
+
+  def unfollow_unfollowers
+    @api.get('users/me/following', :count => 200).body['data'].each do |usr|
+      @api.delete("users/#{usr['id']}/follow")
+    end
   end
 
   def unread_pm_channel_ids
