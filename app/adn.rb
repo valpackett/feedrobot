@@ -66,7 +66,7 @@ class ADN
 
   def unfollow_unfollowers
     @api.get('users/me/following', :count => 200).body['data'].each do |usr|
-      @api.delete("users/#{usr['id']}/follow")
+      # @api.delete("users/#{usr['id']}/follow")
     end
   end
 
