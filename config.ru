@@ -10,7 +10,7 @@ Raven.configure do |config|
   config.excluded_exceptions = ['Sinatra::NotFound']
 end
 
-Thread.abort_on_exception = true
+# Thread.abort_on_exception = true
 
 if ADN_TOKEN
   Thread.new do

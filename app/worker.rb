@@ -12,53 +12,51 @@ class Worker
       puts "No Superfeedr yet..."
       sleep 10
     end
-    work
+    EM.run do
+      work
+    end
+  end
+
+  def self.reconnect(*args)
+    EM.add_timer 10 do
+      puts "Reconnecting!"
+      work
+    end
   end
 
   def self.work
-    EM.run do
-      adn = ADN.global
-      http = EM::HttpRequest.new('https://stream-channel.app.net/stream/user', :inactivity_timeout => 0).get(
-        :head => {'Authorization' => "Bearer #{adn.token}"},
-        :query => {'connection_id' => Ohm.redis.get('conn')}
-      )
-      http.errback do |e, err|
-        puts err
-        puts 'HTTP Error/Stop!'
-        adn.send_pm :destinations => [ADMIN_ADN_UID], :text => "HTTP Error!!! Check the logs."
-        EM.stop
-      end
+    adn = ADN.global
+    http = EM::HttpRequest.new('https://stream-channel.app.net/stream/user', :inactivity_timeout => 0).get(
+      :head => {'Authorization' => "Bearer #{adn.token}"},
+      :keepalive => true,
+      :query => {'connection_id' => Ohm.redis.get('conn')}
+    )
 
-      http.headers do |hash|
-        id = hash['CONNECTION_ID']
-        adn.stream 'channels?include_annotations=1', id
-        puts 'Stream started'
-        puts "Headers: #{hash}"
-        Ohm.redis.set 'conn', id
-      end
+    http.errback &method(:reconnect)
+    http.callback &method(:reconnect)
 
-      buffer = ''
-      http.stream do |chunk|
-        begin
-          if chunk[-1,1] != "\n"
-            puts 'Buffering partial chunk'
-            buffer += chunk
-          else
-            puts 'Processing chunk'
-            json = buffer+chunk
-            e = MultiJson.load json
-            buffer = ''
-            if e['data']['user']['id'] != adn.my_id
-              type = e['meta']['type']
-              case type
-              when 'message' then Message.new(adn, e['data']).process
-              else puts "Unknown chunk type #{type}"
-              end
-            end
+    http.headers do |hash|
+      id = hash['CONNECTION_ID']
+      adn.stream 'channels?include_annotations=1', id
+      puts 'Stream started'
+      puts "Headers: #{hash}"
+      Ohm.redis.set 'conn', id
+    end
+
+    buffer = ''
+    http.stream do |chunk|
+      begin
+        buffer += chunk
+        while line = buffer.slice!(/.+\r\n/)
+          puts 'Processing chunk'
+          buffer = ''
+          e = MultiJson.load line
+          e['data'].each do |msg|
+            Message.new(adn, msg).process if msg['user']['id'] != adn.my_id
           end
-        rescue MultiJson::LoadError => err
-          puts err
         end
+      rescue MultiJson::LoadError => err
+        puts err
       end
     end
   end

@@ -19,9 +19,6 @@ ADN_SECRET = ENV['ADN_SECRET']
 # first run without the token, visit the TOKEN_URL, paste the token to the variable
 ADN_TOKEN = ENV['ADN_TOKEN']
 
-# admin's ADN user ID, for streaming failure notifications
-ADMIN_ADN_UID = ENV['ADMIN_ADN_UID']
-
 # Superfeedr credentials
 SUPERFEEDR_LOGIN = ENV['SUPERFEEDR_LOGIN']
 SUPERFEEDR_PASSWORD = ENV['SUPERFEEDR_PASSWORD']
