@@ -1,3 +1,4 @@
+require_relative 'const.rb'
 require_relative 'adn.rb'
 require_relative 'app.rb'
 require_relative 'models.rb'
@@ -25,7 +26,7 @@ class Worker
         puts err
         puts 'HTTP Error/Stop!'
         EM.stop
-        adn.send_pm :destinations => [ENV['ADMIN_ADN_UID']], :text => "HTTP Error!!! Check the logs."
+        adn.send_pm :destinations => [ADMIN_ADN_UID], :text => "HTTP Error!!! Check the logs."
       end
 
       http.headers do |hash|
