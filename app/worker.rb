@@ -17,7 +17,10 @@ class Worker
   def self.work
     EM.run do
       adn = ADN.global
-      http = EM::HttpRequest.new('https://stream-channel.app.net/stream/user', :inactivity_timeout => 0).get :head => {'Authorization' => "Bearer #{adn.token}"}
+      http = EM::HttpRequest.new('https://stream-channel.app.net/stream/user', :inactivity_timeout => 0).get(
+        :head => {'Authorization' => "Bearer #{adn.token}"},
+        :query => {'connection_id' => Ohm.redis.get('conn')}
+      )
       http.errback do |e, err|
         puts err
         puts 'HTTP Error/Stop!'
@@ -30,6 +33,7 @@ class Worker
         adn.stream 'channels?include_annotations=1', id
         puts 'Stream started'
         puts "Headers: #{hash}"
+        Ohm.redis.set 'conn', id
       end
 
       buffer = ''
@@ -44,7 +48,6 @@ class Worker
             e = MultiJson.load json
             buffer = ''
             if e['data']['user']['id'] != adn.my_id
-              puts e['data']
               type = e['meta']['type']
               case type
               when 'message' then Message.new(adn, e['data']).process
