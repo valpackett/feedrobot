@@ -25,6 +25,12 @@ if ADN_TOKEN
     end
   end
 
+  Rufus::Scheduler.start_new.every('5m') do
+    Raven.capture do
+      Worker.process_followers
+    end
+  end
+
   Thread.new do
     # make a request to set the superfeedr global
     Faraday.get "http://#{HOST}"

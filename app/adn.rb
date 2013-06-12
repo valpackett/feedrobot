@@ -11,7 +11,10 @@ class ADN
     attr_accessor :global
   end
 
+  attr_accessor :token
+
   def initialize(token)
+    @token = token
     @api = Faraday.new(:url => 'https://alpha-api.app.net/stream/0/') do |adn|
       adn.request  :authorization, 'Bearer', token
       adn.request  :multipart
@@ -70,20 +73,8 @@ class ADN
     end
   end
 
-  def unread_pm_channel_ids
-    @api.get('channels', :include_read => 0,
-             :channel_types => 'net.app.core.pm').body['data'].map { |c|
-      c['id']
-    }
-  end
-
-  def unread_messages(cid)
-    b = @api.get("channels/#{cid}/messages", :include_marker => 1,
-                 :include_message_annotations => 1).body
-    marker = Option(b['meta']['marker']['last_read_id']).map(&:to_i).get_or_else 0
-    b['data'].select { |msg|
-      msg['id'].to_i > marker && msg['user']['id'] != my_id
-    }
+  def stream(url_part, conn_id)
+    @api.get(url_part, :connection_id => conn_id)
   end
 
   def new_file(file, type, filename, params={})

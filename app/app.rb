@@ -16,7 +16,7 @@ class FeedRobot < Sinatra::Base
   end
   use Rack::Session::Cookie, :secret => settings.session_secret
   use OmniAuth::Builder do
-    provider :appdotnet, ADN_ID, ADN_SECRET, :scope => 'files,messages,follow'
+    provider :appdotnet, ADN_ID, ADN_SECRET, :scope => 'files,messages,follow,stream'
   end
   use Rack::Superfeedr, {:host => HOST, :login => SUPERFEEDR_LOGIN, :password => SUPERFEEDR_PASSWORD,
                          :format => "json", :async => false} do |superfeedr|

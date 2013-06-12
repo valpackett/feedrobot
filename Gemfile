@@ -7,6 +7,7 @@ gem "rack-superfeedr"
 
 # requesting
 gem "typhoeus"
+gem "em-http-request"
 gem "faraday"
 gem "faraday_middleware"
 gem "faraday_middleware-multi_json"
