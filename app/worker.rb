@@ -25,8 +25,8 @@ class Worker
       http.errback do |e, err|
         puts err
         puts 'HTTP Error/Stop!'
-        EM.stop
         adn.send_pm :destinations => [ADMIN_ADN_UID], :text => "HTTP Error!!! Check the logs."
+        EM.stop
       end
 
       http.headers do |hash|
