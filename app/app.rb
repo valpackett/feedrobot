@@ -28,10 +28,15 @@ class FeedRobot < Sinatra::Base
       feed = Feed.find(:url => url).first
       if feed
         notification['items'].each do |item|
-          feed.users.each do |user|
-            ADN.global.send_pm :destinations => [user.uid], :text => "#{item['title']}: #{item['permalinkUrl']}"
+          permalink = item['permalinkUrl']
+          unless Ohm.redis.sismember 'sent', permalink
+            feed.users.each do |user|
+              ADN.global.send_pm :destinations => [user.uid], :text => "#{item['title']}: #{permalink}"
+            end
+            Ohm.redis.sadd 'sent', permalink
           end
         end
+        Ohm.redis.expire 'sent', 60*10
       else
         puts "Feed not found"
       end
