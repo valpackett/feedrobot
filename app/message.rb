@@ -100,12 +100,12 @@ class Message
 
   def subscribe(url)
     if url = Feedisco.find(url).first
-      Subscription.subscribe_user url, author_id
       sub = $superfeedr.subscribe url
-      unless sub
-        reply :text => "Error: #{$superfeedr.error}"
-      else
+      if sub
+        Subscription.subscribe_user url, author_id
         reply :text => "Subscribed to #{url}!"
+      else
+        reply :text => "Error: #{$superfeedr.error}"
       end
     else
       reply :text => "Feed not found at #{url} :-("
