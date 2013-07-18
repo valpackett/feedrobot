@@ -38,7 +38,11 @@ class ADN
 
   def send_pm(params)
     o = @api.post 'channels/pm/messages', params
-    set_channel_marker o.body['data']['channel_id'], o.body['data']['id']
+    begin
+      set_channel_marker o.body['data']['channel_id'], o.body['data']['id']
+    rescue NoMethodError => e
+      puts "Nil message response: #{o.body}"
+    end
     o
   end
 

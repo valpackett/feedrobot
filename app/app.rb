@@ -27,7 +27,8 @@ class FeedRobot < Sinatra::Base
       puts "Notification for feed #{url}"
       feed = Feed.find(:url => url).first
       if feed
-        notification['items'].each do |item|
+        puts "No items in notification!! #{notification}" unless notification['items']
+        (notification['items'] || []).each do |item|
           permalink = item['permalinkUrl']
           unless Ohm.redis.sismember 'sent', permalink
             feed.users.each do |user|
