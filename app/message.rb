@@ -27,11 +27,13 @@ class Message
   end
 
   def annotation_only?
+    return false unless @data['annotations']
     a = @data['annotations'].find { |a| a['type'] == 'com.riposte.annotationonly' }
     a && a['value']['annotation_only'] == true
   end
 
   def stickers
+    return false unless @data['annotations']
     a = @data['annotations'].find { |a| a['type'] == 'com.riposte.stickers' }
     a['value']['stickerIDs'] if a
   end
