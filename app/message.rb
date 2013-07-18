@@ -96,19 +96,29 @@ class Message
     end
   end
 
-  #### Actions ####
-
-  def subscribe(url)
+  def subscribe_user(url)
     if url = Feedisco.find(url).first
       sub = $superfeedr.subscribe url
       if sub
         Subscription.subscribe_user url, author_id
-        reply :text => "Subscribed to #{url}!"
+        yield :success
       else
-        reply :text => "Error: #{$superfeedr.error}"
+        yield :error
       end
     else
-      reply :text => "Feed not found at #{url} :-("
+      yield :not_found
+    end
+  end
+
+  #### Actions ####
+
+  def subscribe(url)
+    subscribe_user(url) do |result|
+      case result
+      when :success   then reply :text => "Subscribed to #{url}!"
+      when :error     then reply :text => "Error: #{$superfeedr.error}"
+      when :not_found then reply :text => "Feed not found at #{url} :-("
+      end
     end
   end
 
@@ -151,8 +161,8 @@ class Message
       reply :text => "No files found."
     else
       files.each do |file|
-        OPML.parse(open(file['url'])).each do |feed|
-          Subscription.subscribe_user feed, author_id
+        OPML.parse(open(file['url'])).each do |url|
+          subscribe_user url
         end
       end
       reply :text => "Successfully imported feeds!"
