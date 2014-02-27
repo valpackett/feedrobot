@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 # serving
 gem "thin"
 gem "sinatra"
-gem "rack-superfeedr"
+gem "rack-superfeedr", "~> 0.1"
 
 # requesting
 gem "typhoeus"
