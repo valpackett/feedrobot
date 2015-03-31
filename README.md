@@ -1,10 +1,9 @@
 # The Feed Robot
 
-A bot that pushes RSS/Atom feeds to your private messages.
+A bot for App.net that pushes RSS/Atom feeds to your private messages.
 
-[Follow on App.net to use](https://alpha.app.net/feedrobot).
-
-Supports OPML import/export. Uses ADN streaming. 
+**Going down soon!** [Heroku's free tier will be too restricted](http://notes.ericjiang.com/posts/881).
+The code is there for historical reference and learning purposes.
 
 ![Superfeedr](https://www.gravatar.com/avatar/a2f7d4dd6df7dd59e4adab811c00a3a1?s=128)
 
